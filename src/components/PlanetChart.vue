@@ -33,6 +33,7 @@
 import Chart from 'chart.js/auto';
 import macromedidoresFilterMockData from '../macromedidores-filter-mock-data';
 import macromedidoresMockData from '../macromedidores-mock-data';
+import axios from "axios";
 
 export default {
   name: 'PlanetChart',
@@ -64,20 +65,28 @@ export default {
   },
   methods: {
     submitForm: function() {
-      console.log(
-        this.anoInicio,
-        this.mesInicio,
-        this.diaInicio,
-        this.horaInicio,
-        this.minutoInicio,
-        this.segundoInicio,
-        this.anoFim,
-        this.mesFim,
-        this.diaFim,
-        this.horaFim,
-        this.minutoFim,
-        this.segundoFim,
-        this.nomeMacromedidor,
+      axios.get(
+        "http://localhost:8080/macromedidores/api/medicoes/buscarMedicoesPorData?"+
+          "anoInicio="+this.anoInicio+"&"+
+          "mesInicio="+this.mesInicio+"&"+
+          "diaInicio="+this.diaInicio+"&"+
+          "horaInicio="+this.horaInicio+"&"+
+          "minutoInicio="+this.minutoInicio+"&"+
+          "segundoInicio="+this.segundoInicio+"&"+
+          "anoFim="+this.anoFim+"&"+
+          "mesFim="+this.mesFim+"&"+
+          "diaFim="+this.diaFim+"&"+
+          "horaFim="+this.horaFim+"&"+
+          "minutoFim="+this.minutoFim+"&"+
+          "segundoFim="+this.segundoFim+"&"+
+          "nomeMacromedidor="+this.nomeMacromedidor,
+        {
+          headers: { "Access-Control-Allow-Origin": "*" },
+        }
+      ).then(
+        (response) => {
+          console.dir(response);
+        }
       );
     }
   }
