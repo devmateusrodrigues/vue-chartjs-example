@@ -4,6 +4,26 @@
       <canvas id="macromedidores-chart"></canvas>
     </div>
     <div>
+      <input v-model="anoInicio" placeholder="Ano início">
+      <input v-model="mesInicio" placeholder="Mês início">
+      <input v-model="diaInicio" placeholder="Dia início">
+      <input v-model="horaInicio" placeholder="Hora início">
+      <input v-model="minutoInicio" placeholder="Minuto início">
+      <input v-model="segundoInicio" placeholder="Segundo início">
+    </div>
+    <div>
+      <input v-model="anoFim" placeholder="Ano Fim">
+      <input v-model="mesFim" placeholder="Mês Fim">
+      <input v-model="diaFim" placeholder="Dia Fim">
+      <input v-model="horaFim" placeholder="Hora Fim">
+      <input v-model="minutoFim" placeholder="Minuto Fim">
+      <input v-model="segundoFim" placeholder="Segundo Fim">
+    </div>
+    <div>
+      <input v-model="nomeMacromedidor" placeholder="Nome do macromedidor">
+      <button @click="submitForm">Filtrar</button>
+    </div>
+    <div>
       <canvas id="macromedidores-filter-chart"></canvas>
     </div>
   </div>
@@ -19,7 +39,20 @@ export default {
   data() {
     return {
         macromedidoresMockData: macromedidoresMockData,
-        macromedidoresFilterMockData: macromedidoresFilterMockData
+        macromedidoresFilterMockData: macromedidoresFilterMockData,
+        anoInicio: null,
+        mesInicio: null,
+        diaInicio: null,
+        horaInicio: null,
+        minutoInicio: null,
+        segundoInicio: null,
+        anoFim: null,
+        mesFim: null,
+        diaFim: null,
+        horaFim: null,
+        minutoFim: null,
+        segundoFim: null,
+        nomeMacromedidor: null
     }
   },
   mounted() {
@@ -28,6 +61,25 @@ export default {
 
     const localizacaoMacromedidoresFilterChart = document.getElementById('macromedidores-filter-chart');
     new Chart(localizacaoMacromedidoresFilterChart, this.macromedidoresFilterMockData);
+  },
+  methods: {
+    submitForm: function() {
+      console.log(
+        this.anoInicio,
+        this.mesInicio,
+        this.diaInicio,
+        this.horaInicio,
+        this.minutoInicio,
+        this.segundoInicio,
+        this.anoFim,
+        this.mesFim,
+        this.diaFim,
+        this.horaFim,
+        this.minutoFim,
+        this.segundoFim,
+        this.nomeMacromedidor,
+      );
+    }
   }
 }
 </script>
