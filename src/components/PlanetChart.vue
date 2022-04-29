@@ -41,6 +41,53 @@ export default {
     return {
         macromedidoresMockData: macromedidoresMockData,
         macromedidoresFilterMockData: macromedidoresFilterMockData,
+        optionsCharts: {
+          responsive: true,
+          lineTension: 1,
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
+                  padding: 25
+                }
+              }
+            ]
+          }
+        },
+        dadosGraficoDeFiltragem: {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Volume Acumulado",
+                data: [],
+                borderColor: "#EBD121",
+                borderWidth: 3
+              },
+              {
+                label: "Vazão",
+                data: [],
+                borderColor: "#4228EB",
+                borderWidth: 3
+              },
+              {
+                label: "Pressão",
+                data: [],
+                borderColor: "#EB2815",
+                borderWidth: 3
+              },
+              {
+                label: "Temperatura",
+                data: [],
+                borderColor: "#EB5928",
+                borderWidth: 3
+              },
+            ]
+          },
+          options: this.optionsCharts
+        },
         anoInicio: null,
         mesInicio: null,
         diaInicio: null,
@@ -59,9 +106,6 @@ export default {
   mounted() {
     const localizacaoMacromedidoresChart = document.getElementById('macromedidores-chart');
     new Chart(localizacaoMacromedidoresChart, this.macromedidoresMockData);
-
-    const localizacaoMacromedidoresFilterChart = document.getElementById('macromedidores-filter-chart');
-    new Chart(localizacaoMacromedidoresFilterChart, this.macromedidoresFilterMockData);
   },
   methods: {
     submitForm: function() {
@@ -85,7 +129,31 @@ export default {
         }
       ).then(
         (response) => {
-          console.dir(response);
+          const medicoes = response["data"]["payload"]["medicoes"];
+          let datasDasMedicoesRetornadas = [];
+
+          for (let index = 0; index < medicoes.length; index++) {
+            let dia = medicoes[index].dataHoraCaptacaoDados.dayOfMonth;
+            let mes = medicoes[index].dataHoraCaptacaoDados.monthValue;
+            let ano = medicoes[index].dataHoraCaptacaoDados.year;
+
+            let dataCompleta = dia+"/"+mes+"/"+ano;
+            datasDasMedicoesRetornadas[index] = dataCompleta;
+          }
+
+          const volumeAcumuladoArray = medicoes.map((item) => item.volumeAcumulado);
+          const vazaoArray = medicoes.map((item) => item.vazao);
+          const pressaoArray = medicoes.map((item) => item.pressao);
+          const temperaturaArray = medicoes.map((item) => item.temperatura);
+
+          this.dadosGraficoDeFiltragem.data.labels = datasDasMedicoesRetornadas;
+          this.dadosGraficoDeFiltragem.data.datasets[0].data = volumeAcumuladoArray;
+          this.dadosGraficoDeFiltragem.data.datasets[1].data = vazaoArray;
+          this.dadosGraficoDeFiltragem.data.datasets[2].data = pressaoArray;
+          this.dadosGraficoDeFiltragem.data.datasets[3].data = temperaturaArray;
+
+          const localizacaoMacromedidoresFilterChart = document.getElementById('macromedidores-filter-chart');
+          new Chart(localizacaoMacromedidoresFilterChart, this.dadosGraficoDeFiltragem);
         }
       );
     }
