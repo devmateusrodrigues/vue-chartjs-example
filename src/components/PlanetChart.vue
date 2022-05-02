@@ -31,16 +31,12 @@
 
 <script>
 import Chart from 'chart.js/auto';
-import macromedidoresFilterMockData from '../macromedidores-filter-mock-data';
-import macromedidoresMockData from '../macromedidores-mock-data';
 import axios from "axios";
 
 export default {
   name: 'PlanetChart',
   data() {
     return {
-        macromedidoresMockData: macromedidoresMockData,
-        macromedidoresFilterMockData: macromedidoresFilterMockData,
         optionsCharts: {
           responsive: true,
           lineTension: 1,
@@ -56,6 +52,39 @@ export default {
           }
         },
         dadosGraficoDeFiltragem: {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Volume Acumulado",
+                data: [],
+                borderColor: "#EBD121",
+                borderWidth: 3
+              },
+              {
+                label: "Vazão",
+                data: [],
+                borderColor: "#4228EB",
+                borderWidth: 3
+              },
+              {
+                label: "Pressão",
+                data: [],
+                borderColor: "#EB2815",
+                borderWidth: 3
+              },
+              {
+                label: "Temperatura",
+                data: [],
+                borderColor: "#EB5928",
+                borderWidth: 3
+              },
+            ]
+          },
+          options: this.optionsCharts
+        },
+        dadosGraficoUltimasInformacoes: {
           type: "line",
           data: {
             labels: [],
@@ -104,8 +133,7 @@ export default {
     }
   },
   mounted() {
-    const localizacaoMacromedidoresChart = document.getElementById('macromedidores-chart');
-    new Chart(localizacaoMacromedidoresChart, this.macromedidoresMockData);
+    this.buildLastInfoOnMacromedidores();
   },
   methods: {
     submitForm: function() {
@@ -154,6 +182,33 @@ export default {
 
           const localizacaoMacromedidoresFilterChart = document.getElementById('macromedidores-filter-chart');
           new Chart(localizacaoMacromedidoresFilterChart, this.dadosGraficoDeFiltragem);
+        }
+      );
+    },
+    buildLastInfoOnMacromedidores: function() {
+      axios.get(
+        "http://localhost:8080/macromedidores/api/medicoes/buscarUltimasMedicoes",
+        {
+          headers: { "Access-Control-Allow-Origin": "*" },
+        }
+      ).then(
+        (response) => {
+          const medicoes = response["data"]["payload"]["medicoes"];
+
+          const nomesMacromedidoresArray = medicoes.map((item) => item.nomeMacromedidor);
+          const volumeAcumuladoArray = medicoes.map((item) => item.volumeAcumulado);
+          const vazaoArray = medicoes.map((item) => item.vazao);
+          const pressaoArray = medicoes.map((item) => item.pressao);
+          const temperaturaArray = medicoes.map((item) => item.temperatura);
+
+          this.dadosGraficoUltimasInformacoes.data.labels = nomesMacromedidoresArray;
+          this.dadosGraficoUltimasInformacoes.data.datasets[0].data = volumeAcumuladoArray;
+          this.dadosGraficoUltimasInformacoes.data.datasets[1].data = vazaoArray;
+          this.dadosGraficoUltimasInformacoes.data.datasets[2].data = pressaoArray;
+          this.dadosGraficoUltimasInformacoes.data.datasets[3].data = temperaturaArray;
+
+          const localizacaoMacromedidoresChart = document.getElementById('macromedidores-chart');
+          new Chart(localizacaoMacromedidoresChart, this.dadosGraficoUltimasInformacoes);
         }
       );
     }
